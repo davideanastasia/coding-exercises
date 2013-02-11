@@ -1,4 +1,16 @@
 project(CodingExercises)
 cmake_minimum_required(VERSION 2.8)
 
+find_package(GTest)
+include_directories(${GTEST_INCLUDE_DIRS})
+
+if(UNIX)
+find_package(Threads)
+set(TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+else(UNIX)
+set(TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES})
+endif(UNIX)
+
+
 add_subdirectory(SmartWorldToy)
+add_subdirectory(SimpleHash)
