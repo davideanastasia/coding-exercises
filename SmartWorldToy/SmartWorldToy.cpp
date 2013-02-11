@@ -19,6 +19,8 @@
  * return -1 if this is not possible.
  */
 
+//! \ref http://community.topcoder.com/stat?c=problem_statement&pm=3935&rd=6532
+
 #include <string>
 #include <iostream>
 #include <set>
@@ -26,6 +28,8 @@
 #include <iterator>
 #include <sstream>
 #include <cassert>
+
+#include <gtest/gtest.h>
 
 using namespace std;
 
@@ -155,36 +159,37 @@ int countSteps(const string& beginWord,
     return -1;
 }
 
-void test0()
+TEST(SmartWorldToy, Test0)
 {
     vector<string> forbiddenSequence;
     forbiddenSequence.push_back("a a a z");
     forbiddenSequence.push_back("a a z a");
     forbiddenSequence.push_back("a z a a");
     forbiddenSequence.push_back("z a a a");
+    forbiddenSequence.push_back("a z z z");
+    forbiddenSequence.push_back("z a z z");
+    forbiddenSequence.push_back("z z a z");
+    forbiddenSequence.push_back("z z z a");
 
     Dictionary forbiddenDictionary(buildForbiddenDictionary(forbiddenSequence));
-    copy(forbiddenDictionary.begin(), forbiddenDictionary.end(),
-         ostream_iterator<string>(cout, "\n"));
+//    copy(forbiddenDictionary.begin(), forbiddenDictionary.end(),
+//         ostream_iterator<string>(cout, "\n"));
 
-    std::cout << countSteps("aaaa", "zzzz",
-                            forbiddenDictionary) << "\n";
+    EXPECT_EQ(countSteps("aaaa", "zzzz", forbiddenDictionary), 8);
 }
 
 
-void test1()
+TEST(SmartWorldToy, Test1)
 {
-    std::cout << countSteps("aaaa", "bbbb",
-                            Dictionary()) << "\n";
+    EXPECT_EQ(countSteps("aaaa", "bbbb", Dictionary()), 4);
 }
 
-void test2()
-{
-    std::cout << countSteps("aaaa", "mmnn",
-                            Dictionary()) << "\n";
-}
+//TEST(SmartWorldToy, Test2)
+//{
+//    EXPECT_EQ(countSteps("aaaa", "mmnn", Dictionary()), 50);
+//}
 
-void test3()
+TEST(SmartWorldToy, Test3)
 {
     vector<string> forbiddenSequence;
     forbiddenSequence.push_back("bz a a a");
@@ -193,19 +198,8 @@ void test3()
     forbiddenSequence.push_back("a a a bz");
 
     Dictionary forbiddenDictionary(buildForbiddenDictionary(forbiddenSequence));
-    copy(forbiddenDictionary.begin(), forbiddenDictionary.end(),
-         ostream_iterator<string>(cout, "\n"));
+//    copy(forbiddenDictionary.begin(), forbiddenDictionary.end(),
+//         ostream_iterator<string>(cout, "\n"));
 
-    std::cout << countSteps("aaaa", "bbbb",
-                            forbiddenDictionary) << "\n";
-}
-
-int main()
-{
-    test0();
-    test1();
-    // test2();
-    test3();
-
-    return 0;
+    EXPECT_EQ(countSteps("aaaa", "bbbb", forbiddenDictionary), -1);
 }
