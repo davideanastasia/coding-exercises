@@ -1,25 +1,10 @@
 /*
  * SmartWorldToy - TopCoder
  *
- * A word composed of four Latin lowercase letters is given. With a single
- * button click you can change any letter to the previous or next letter in
- * alphabetical order (for example 'c' can be changed to 'b' or 'd').
- * The alphabet is circular, thus 'a' can become 'z', and 'z' can become 'a'
- * with one click.
+ * Full description here:
+ * http://community.topcoder.com/stat?c=problem_statement&pm=3935&rd=6532
  *
- * A collection of constraints is also given, each defining a set of forbidden
- * words. A constraint is composed of 4 strings of letters. A word is forbidden
- * if each of its characters is contained in corresponding string of a single
- * constraint, i.e. first letter is contained in the first string, the second
- * letter - in the second string, and so on. For example, the constraint
- * "lf a tc e" defines the words "late", "fate", "lace" and "face".
- *
- * You should find the minimum number of button presses required to reach the
- * word finish from the word start without passing through forbidden words, or
- * return -1 if this is not possible.
  */
-
-//! \ref http://community.topcoder.com/stat?c=problem_statement&pm=3935&rd=6532
 
 #include <string>
 #include <iostream>
@@ -203,3 +188,34 @@ TEST(SmartWorldToy, Test3)
 
     EXPECT_EQ(countSteps("aaaa", "bbbb", forbiddenDictionary), -1);
 }
+
+TEST(SmartWorldToy, Test4)
+{
+    vector<string> forbiddenSequence;
+    forbiddenSequence.push_back("cdefghijklmnopqrstuvwxyz a a a");
+    forbiddenSequence.push_back("a cdefghijklmnopqrstuvwxyz a a");
+    forbiddenSequence.push_back("a a cdefghijklmnopqrstuvwxyz a");
+    forbiddenSequence.push_back("a a a cdefghijklmnopqrstuvwxyz");
+
+    Dictionary forbiddenDictionary(buildForbiddenDictionary(forbiddenSequence));
+//    copy(forbiddenDictionary.begin(), forbiddenDictionary.end(),
+//         ostream_iterator<string>(cout, "\n"));
+
+    EXPECT_EQ(countSteps("aaaa", "zzzz", forbiddenDictionary), 6);
+}
+
+//
+// **** This is a really long test, because it actually trying all the 24^4
+// combinations before actually realizing that he cannot get to the status
+// bbbb ****
+//
+//TEST(SmartWorldToy, Test5)
+//{
+//    vector<string> forbiddenSequence;
+//    forbiddenSequence.push_back("b b b b");
+//
+//    Dictionary forbiddenDictionary(buildForbiddenDictionary(forbiddenSequence));
+//
+//    EXPECT_EQ(countSteps("aaaa", "bbbb", forbiddenDictionary), -1);
+//}
+//
