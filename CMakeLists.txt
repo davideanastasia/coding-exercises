@@ -14,3 +14,4 @@ endif(UNIX)
 
 add_subdirectory(SmartWorldToy)
 add_subdirectory(SimpleHash)
+add_subdirectory(GrafixMask)
