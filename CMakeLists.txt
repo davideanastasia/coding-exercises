@@ -11,8 +11,8 @@ else(UNIX)
 set(TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES})
 endif(UNIX)
 
-
 add_subdirectory(SmartWorldToy)
 add_subdirectory(SimpleHash)
 add_subdirectory(GrafixMask)
 add_subdirectory(GeneralChess)
+add_subdirectory(VariadicTemplate)
