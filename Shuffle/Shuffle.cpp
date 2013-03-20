@@ -8,7 +8,7 @@
 using namespace std;
 
 void shuffle(vector<int>& data) {
-    for (int i = data.size()-1; i > 2; --i) {
+    for (int i = data.size()-1; i > 1; --i) {
         int idx = rand()%i;
         swap(data[idx], data[i]);
     }
