@@ -1,7 +1,9 @@
+//
 //          Copyright Davide Anastasia 2013.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
+//
 
 #ifndef SKIPLIST_H
 #define SKIPLIST_H
@@ -14,7 +16,7 @@
 
 /// \brief generic skiplist node: can contain a pair (for a map) or a single
 /// value (for a set)
-template <typename Tp>
+template <typename Tp, size_t Depth>
 struct node
 {
     typedef Tp value_type;
@@ -25,31 +27,25 @@ struct node
     /// \brief depth of the current element
     size_t depth_;
     /// \brief vector to node(s)
-    node** forward_;
+    node* forward_[Depth];
 
     node(Tp value, size_t depth)
         : value_(value)
         , depth_(depth)
-        , forward_(new node*[depth])
     {
         // set all pointers to zero...
-        for (size_t idx = 0; idx < depth_; ++idx) {
+        for (size_t idx = 0; idx < Depth; ++idx) {
             forward_[idx] = NULL;
         }
-    }
-
-    ~node()
-    {
-        delete [] forward_;
     }
 };
 
 /// \brief iterator for skiplist nodes
-template <typename Tp>
+template <typename Tp, size_t Depth>
 class skiplist_iterator
 {
 public:
-    typedef skiplist_iterator<Tp>                   self;
+    typedef skiplist_iterator<Tp, Depth>            self;
 
     typedef typename std::forward_iterator_tag      iterator_category;
     typedef ptrdiff_t                               difference_type;
@@ -58,7 +54,7 @@ public:
     typedef Tp&                                     reference;
     typedef Tp*                                     pointer;
 
-    typedef node<Tp>*                               node_ptr;
+    typedef node<Tp, Depth>*                        node_ptr;
 
     /// \brief ctor
     explicit skiplist_iterator(node_ptr ptr)
@@ -104,11 +100,11 @@ public:
 };
 
 /// \brief const iterator for skiplist nodes
-template <typename Tp>
+template <typename Tp, size_t Depth>
 class skiplist_const_iterator
 {
 public:
-    typedef skiplist_const_iterator<Tp>             self;
+    typedef skiplist_const_iterator<Tp, Depth>      self;
 
     typedef typename std::forward_iterator_tag      iterator_category;
     typedef ptrdiff_t                               difference_type;
@@ -117,9 +113,9 @@ public:
     typedef const Tp&                               reference;
     typedef const Tp*                               pointer;
 
-    typedef const node<Tp>*                         node_ptr;
+    typedef const node<Tp, Depth>*                  node_ptr;
 
-    typedef skiplist_iterator<Tp>                   iterator;
+    typedef skiplist_iterator<Tp, Depth>            iterator;
 
     /// \brief ctor
     explicit skiplist_const_iterator(node_ptr ptr)
@@ -169,22 +165,22 @@ public:
     node_ptr current_node_;
 };
 
-template <typename Val>
+template <typename Val, size_t Depth>
 inline bool
-operator==(const skiplist_iterator<Val>& x,
-           const skiplist_const_iterator<Val>& y)
+operator==(const skiplist_iterator<Val, Depth>& x,
+           const skiplist_const_iterator<Val, Depth>& y)
 { return x.current_node_ == y.current_node_; }
 
-template <typename Val>
+template <typename Val, size_t Depth>
 inline bool
-operator!=(const skiplist_iterator<Val>& x,
-           const skiplist_const_iterator<Val>& y)
+operator!=(const skiplist_iterator<Val, Depth>& x,
+           const skiplist_const_iterator<Val, Depth>& y)
 { return x.current_node_ != y.current_node_; }
 
 
 template <typename TKey, typename TVal,
           typename Comp = std::less< TKey >,
-          size_t MaxDepth = 6>
+          size_t MaxDepth = 16>
 class skiplist
 {
 public:
@@ -192,10 +188,20 @@ public:
     typedef TVal                                mapped_type;
     typedef std::pair<const TKey, TVal>         value_type;
 
-    typedef node<value_type>                    node_type;
+    typedef node<value_type, MaxDepth>          node_type;
 
     typedef Comp                                key_compare;
     // typedef Alloc                            allocator_type;
+
+public:
+    typedef skiplist_iterator<value_type, MaxDepth>         iterator;
+    typedef skiplist_const_iterator<value_type, MaxDepth>   const_iterator;
+
+    iterator begin()             { return iterator(head_->forward_[0]); }
+    iterator end()               { return iterator(NULL); }
+
+    const_iterator begin() const { return const_iterator(head_->forward_[0]); }
+    const_iterator end()   const { return const_iterator(NULL); }
 
 private:
     /// \brief comparator
@@ -241,7 +247,7 @@ public:
     /// \return current number of nodes in the data structure
     size_t size() const { return num_nodes_; }
 
-    TVal* find(const TKey& key)
+    iterator find(const TKey& key)
     {
         node_type* current_node = head_;
         for ( int current_level = MaxDepth - 1; current_level >= 0; --current_level )
@@ -255,9 +261,9 @@ public:
         current_node = current_node->forward_[0];
         if ( current_node != NULL && current_node->value_.first == key)
         {
-            return &current_node->value_.second;
+            return iterator(current_node); //->value_.second;
         }
-        return NULL;
+        return iterator(NULL);
     }
 
     bool insert(const TKey& key, const TVal& val)
@@ -345,16 +351,6 @@ public:
             out << std::endl;
         }
     }
-
-public:
-    typedef skiplist_iterator<value_type>             iterator;
-    typedef skiplist_const_iterator<value_type>       const_iterator;
-
-    iterator begin()             { return iterator(head_->forward_[0]); }
-    iterator end()               { return iterator(NULL); }
-
-    const_iterator begin() const { return const_iterator(head_->forward_[0]); }
-    const_iterator end()   const { return const_iterator(NULL); }
 };
 
 

@@ -40,7 +40,7 @@ int main()
     }
     sklist.print( std::cout );
 
-    if ( sklist.find( 617 ) ) { cout << "Found" << endl; }
+    if ( sklist.find( 617 ) != sklist.end() ) { cout << "Found" << endl; }
     else cout << "Not found!" << endl;
 
     MySkipList::iterator it = sklist.begin();

@@ -60,7 +60,7 @@ int main()
 {
     srand(0);   // set seed to zero: repetible result!
 
-    std::vector<float> samples(10000);
+    std::vector<float> samples(1000000);
     std::generate(samples.begin(), samples.end(),
                   Rand());
 
@@ -85,14 +85,14 @@ int main()
 
     sw.restart();
     for (size_t idx = 0; idx < samples.size(); ++idx) {
-        mp.find(samples[idx]);
+        mp.find(samples[idx])->second = idx;
     }
     float mapSearch = sw.elapsedUs().count();
     std::cout << "std::map search elapsed time: " << mapSearch << std::endl;
 
     sw.restart();
     for (size_t idx = 0; idx < samples.size(); ++idx) {
-        sk.find(samples[idx]);
+        sk.find(samples[idx])->second = idx;
     }
     float skiplistSearch = sw.elapsedUs().count();
     std::cout << "skiplist search elapsed time: " << skiplistSearch << std::endl;
