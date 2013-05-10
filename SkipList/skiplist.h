@@ -179,7 +179,7 @@ operator!=(const skiplist_iterator<Val>& x,
 
 template <typename TKey, typename TVal,
           typename Comp = std::less< TKey >,
-          size_t MaxDepth = 10>
+          size_t MaxDepth = 6>
 class skiplist
 {
 public:
@@ -205,7 +205,7 @@ private:
 
     size_t get_level() {
         size_t l = 1;
-        while ( rand() < RAND_MAX/2 && l < MaxDepth ) {
+        while ( rand() < (RAND_MAX >> 1) && l < MaxDepth ) {
             l++;
         }
 
@@ -313,11 +313,13 @@ public:
 
     void print(std::ostream& out)
     {
+        static size_t WIDTH = 7;
+
         for ( int current_level = MaxDepth-1; current_level >= 0; --current_level )
         {
-            out << std::setw(5) << "----";
+            out << std::setw(WIDTH) << "----";
         }
-        out << " [" << std::setw(5) << num_nodes_ << "]";
+        out << " [" << std::setw(WIDTH) << num_nodes_ << "]";
         out << std::endl;
 
         for ( node_type* current_node = head_; current_node != NULL ; current_node = current_node->forward_[0] )
@@ -326,15 +328,15 @@ public:
             {
                 if ( current_level < current_node->depth_ ) {
                     if ( current_node->forward_[current_level] != NULL ) {
-                        out << std::setw(5) << current_node->forward_[current_level]->value_.first;
+                        out << std::setw(WIDTH) << std::setprecision(3) << current_node->forward_[current_level]->value_.first;
                     } else {
-                        out << std::setw(5) << "o";
+                        out << std::setw(WIDTH) << "o";
                     }
                 } else {
-                    out << std::setw(5) << ".";
+                    out << std::setw(WIDTH) << ".";
                 }
             }
-            out << " [" << std::setw(5) << current_node->value_.first << "]";
+            out << " [" << std::setw(WIDTH) << std::setprecision(3) << current_node->value_.first << "]";
             out << std::endl;
         }
     }
