@@ -43,6 +43,20 @@ int main()
     if ( sklist.find( 617 ) ) { cout << "Found" << endl; }
     else cout << "Not found!" << endl;
 
+    MySkipList::iterator it = sklist.begin();
+
+    while ( it != sklist.end() ) {
+        std::cout << it->first << " " << it->second << std::endl;
+        ++it;
+    }
+
+    MySkipList::const_iterator it_c = sklist.begin();
+
+    while ( it_c != sklist.end() ) {
+        std::cout << it_c->first << " " << it_c->second << std::endl;
+        ++it_c;
+    }
+
     return 0;
 }
 
