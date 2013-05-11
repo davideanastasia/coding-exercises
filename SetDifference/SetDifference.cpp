@@ -23,11 +23,18 @@ SetInt setDifference(const VectorInt& v1, const VectorInt& v2)
 {
     SetInt output;
     SetInt elem1(v1.begin(), v1.end());
-    for ( const int& i: v2 ) {
+
+    for_each(v2.begin(), v2.end(), [&](int i){
         if ( !elem1.count(i) ) {
             output.insert(i);
         }
-    }
+    });
+
+//    for ( const int& i: v2 ) {
+//        if ( !elem1.count(i) ) {
+//            output.insert(i);
+//        }
+//    }
     return output;
 }
 
